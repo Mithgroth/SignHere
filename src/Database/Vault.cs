@@ -27,6 +27,21 @@ namespace SignHere.Database
             };
         }
 
+        public static Dictionary<Category, IEnumerable<Extension>> GetDictionary(IEnumerable<Category> categories)
+        {
+            var dictionaryList = new List<Dictionary<Category, IEnumerable<Extension>>>();
+            foreach (var category in categories)
+            {
+                dictionaryList.Add(GetDictionary(category));
+            }
+
+            var result = dictionaryList.SelectMany(dict => dict)
+                                       .ToLookup(pair => pair.Key, pair => pair.Value)
+                                       .ToDictionary(group => group.Key, group => group.First());
+
+            return result;
+        }
+
         internal static List<Signature> Bank = new List<Signature>()
         {
             new Signature()

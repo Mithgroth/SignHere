@@ -13,7 +13,7 @@ namespace SignHere
         /// <para>Checks the <paramref name="stream"/>'s header bytes, returns a matched <see cref="Signature" />.</para>
         /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
         /// </summary>
-        /// <param name="stream"> Any kind of stream to be checked for its content. </param>
+        /// <param name="stream"> A stream of bytes to be checked for its content. </param>
         /// <returns> A <see cref="Signature" /> object with <seealso cref="Extension" />, MagicBytes and Description. </returns>
         /// <exception cref="ArgumentNullException"> Thrown when <paramref name="stream"/> is null. </exception>
         public static Signature FindSignature(Stream stream)
@@ -41,12 +41,29 @@ namespace SignHere
         }
 
         /// <summary>
+        /// Checks the <paramref name="stream"/>'s header bytes if it matches the given <see cref="Extension" />s. <br/>
+        /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
+        /// </summary>
+        /// <param name="stream">Any type of stream to be checked for its content. </param>
+        /// <param name="extensions"><see cref="Extension" /> names to be checked for. </param>
+        /// <returns> True if the <paramref name="stream"/>'s extension matches with <paramref name="extensions" /> </returns>
+        /// <exception cref="ArgumentNullException"> Thrown when <paramref name="stream"/> is null or empty. </exception>
+        /// /// <exception cref="InvalidOperationException"> Thrown when <paramref name="stream"/> cannot be read. </exception>
+        public static bool Is(this Stream stream, IEnumerable<Extension> extensions)
+        {
+            stream.Validate();
+
+            var findResult = Find(stream);
+            return extensions.Any(e => e == findResult?.Extension);
+        }
+
+        /// <summary>
         /// Checks the <paramref name="stream"/>'s header bytes if its <see cref="Signature"/>.Description matches the given <see cref="Category" />. <br/>
         /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
         /// </summary>
         /// <param name="stream">Any type of stream to be checked for its content. </param>
         /// <param name="category">A predefined constant to be looked in a <seealso cref="Signature" />'s description text. </param>
-        /// <returns> True if the <paramref name="stream"/>'s extension matches with <paramref name="extension" /> </returns>
+        /// <returns> True if the <paramref name="stream"/>'s extension matches with <paramref name="category" /> </returns>
         /// <exception cref="ArgumentNullException"> Thrown when <paramref name="stream"/> is null or empty. </exception>
         /// /// <exception cref="InvalidOperationException"> Thrown when <paramref name="stream"/> cannot be read. </exception>
         public static bool Is(this Stream stream, Category category)
@@ -66,12 +83,45 @@ namespace SignHere
         }
 
         /// <summary>
+        /// Checks the <paramref name="stream"/>'s header bytes if its <see cref="Signature"/>.Description matches the given <see cref="Category" />. <br/>
+        /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
+        /// </summary>
+        /// <param name="stream">Any type of stream to be checked for its content. </param>
+        /// <param name="categories">Predefined constants to be looked in a <seealso cref="Signature" />'s description text. </param>
+        /// <returns> True if the <paramref name="stream"/>'s extension matches with <paramref name="categories" /> </returns>
+        /// <exception cref="ArgumentNullException"> Thrown when <paramref name="stream"/> is null or empty. </exception>
+        /// /// <exception cref="InvalidOperationException"> Thrown when <paramref name="stream"/> cannot be read. </exception>
+        public static bool Is(this Stream stream, IEnumerable<Category> categories)
+        {
+            stream.Validate();
+
+            var findResult = Find(stream);
+            if (findResult == default)
+            {
+                return false;
+            }
+
+            var extensionList = new List<Extension>();
+            var dictionary = Vault.GetDictionary(categories);
+            foreach (var category in categories)
+            {
+                dictionary.TryGetValue(category, out IEnumerable<Extension> list);
+                if (list?.Any() == true)
+                {
+                    extensionList.AddRange(list);
+                }
+            }
+
+            return extensionList.Distinct().Any(x => x == findResult.Extension);
+        }
+
+        /// <summary>
         /// Checks the <paramref name="stream"/>'s header bytes if its <see cref="Signature"/>.Description matches the given <paramref name="searchText"/>. <br/>
         /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
         /// </summary>
         /// <param name="stream">Any type of stream to be checked for its content. </param>
         /// <param name="searchText">Text to be looked in a <seealso cref="Signature" />'s description text.</param>
-        /// <returns> True if the <paramref name="stream"/>'s extension matches with <paramref name="extension" /> </returns>
+        /// <returns> True if the <paramref name="stream"/>'s extension matches with <paramref name="searchText" /> </returns>
         /// <exception cref="ArgumentNullException"> Thrown when <paramref name="stream"/> is null or empty. </exception>
         /// /// <exception cref="InvalidOperationException"> Thrown when <paramref name="stream"/> cannot be read. </exception>
         public static bool Is(this Stream stream, string searchText)
@@ -85,8 +135,39 @@ namespace SignHere
             }
 
             var extensionList = Vault.FindExtensions(searchText);
-
             return extensionList.Any(x => x == findResult.Extension);
+        }
+
+        /// <summary>
+        /// Checks the <paramref name="stream"/>'s header bytes if its <see cref="Signature"/>.Description matches the given <paramref name="searchTexts"/>. <br/>
+        /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
+        /// </summary>
+        /// <param name="stream">Any type of stream to be checked for its content. </param>
+        /// <param name="searchTexts">Texts to be looked in a <seealso cref="Signature" />'s description text.</param>
+        /// <returns> True if the <paramref name="stream"/>'s extension matches with <paramref name="searchTexts" /> </returns>
+        /// <exception cref="ArgumentNullException"> Thrown when <paramref name="stream"/> is null or empty. </exception>
+        /// /// <exception cref="InvalidOperationException"> Thrown when <paramref name="stream"/> cannot be read. </exception>
+        public static bool Is(this Stream stream, IEnumerable<string> searchTexts)
+        {
+            stream.Validate();
+
+            var findResult = Find(stream);
+            if (findResult == default)
+            {
+                return false;
+            }
+
+            var extensionList = new List<Extension>();
+            foreach (var searchText in searchTexts)
+            {
+                var list = Vault.FindExtensions(searchText);
+                if (list?.Any() == true)
+                {
+                    extensionList.AddRange(list);
+                }
+            }
+
+            return extensionList.Distinct().Any(x => x == findResult.Extension);
         }
 
         /// <summary>
@@ -112,12 +193,34 @@ namespace SignHere
         }
 
         /// <summary>
+        /// Converts the <paramref name="formFile"/> to a <see cref="MemoryStream"/> and checks its header bytes if it matches the given <see cref="Extension" />. <br/>
+        /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
+        /// </summary>
+        /// <param name="formFile">Uploaded file to be checked for its content. </param>
+        /// <param name="extensions"><see cref="Extension" /> names to be checked for. </param>
+        /// <returns> True if the <paramref name="formFile"/>'s extension matches with <paramref name="extensions" /> </returns>
+        /// <exception cref="ArgumentNullException"> Thrown when <paramref name="formFile"/> is null or empty. </exception>
+        public static bool Is(this IFormFile formFile, IEnumerable<Extension> extensions)
+        {
+            formFile.Validate();
+
+            var stream = new MemoryStream();
+            formFile.CopyTo(stream);
+            var byteArray = stream.ToArray();
+
+            byteArray.Validate();
+
+            var findResult = Find(byteArray);
+            return extensions.Any(e => e == findResult?.Extension);
+        }
+
+        /// <summary>
         /// <para>Converts the <paramref name="formFile"/> to a <see cref="MemoryStream"/> and checks its header bytes if its <see cref="Signature"/>.Description matches the given <see cref="Category" />. <br/>
         /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
         /// </summary>
         /// <param name="formFile">Uploaded file to be checked for its content. </param>
         /// <param name="category">A predefined constant to be looked in a <seealso cref="Signature" />'s description text. </param>
-        /// <returns> True if the <paramref name="formFile"/>'s extension matches with <paramref name="extension" /> </returns>
+        /// <returns> True if the <paramref name="formFile"/>'s extension matches with <paramref name="category" /> </returns>
         /// <exception cref="ArgumentNullException"> Thrown when <paramref name="formFile"/> is null or empty. </exception>
         public static bool Is(this IFormFile formFile, Category category)
         {
@@ -136,12 +239,45 @@ namespace SignHere
         }
 
         /// <summary>
+        /// <para>Converts the <paramref name="formFile"/> to a <see cref="MemoryStream"/> and checks its header bytes if its <see cref="Signature"/>.Description matches the given <see cref="Category" />. <br/>
+        /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
+        /// </summary>
+        /// <param name="formFile">Uploaded file to be checked for its content. </param>
+        /// <param name="categories">Predefined constants to be looked in a <seealso cref="Signature" />'s description text. </param>
+        /// <returns> True if the <paramref name="formFile"/>'s extension matches with <paramref name="categories" /> </returns>
+        /// <exception cref="ArgumentNullException"> Thrown when <paramref name="formFile"/> is null or empty. </exception>
+        public static bool Is(this IFormFile formFile, IEnumerable<Category> categories)
+        {
+            formFile.Validate();
+
+            var stream = new MemoryStream();
+            formFile.CopyTo(stream);
+            var byteArray = stream.ToArray();
+            byteArray.Validate();
+
+            var findResult = Find(byteArray);
+
+            var extensionList = new List<Extension>();
+            var dictionary = Vault.GetDictionary(categories);
+            foreach (var category in categories)
+            {
+                dictionary.TryGetValue(category, out IEnumerable<Extension> list);
+                if (list?.Any() == true)
+                {
+                    extensionList.AddRange(list);
+                }
+            }
+
+            return extensionList.Distinct().Any(x => x == findResult.Extension);
+        }
+
+        /// <summary>
         /// <para>Converts the <paramref name="formFile"/> to a <see cref="MemoryStream"/> and checks its header bytes if its <see cref="Signature"/>.Description matches the given <paramref name="searchText"/>. <br/>
         /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
         /// </summary>
         /// <param name="formFile">Uploaded file to be checked for its content. </param>
         /// <param name="searchText">Text to be looked in a <seealso cref="Signature" />'s description text.</param>
-        /// <returns> True if the <paramref name="formFile"/>'s extension matches with <paramref name="extension" /> </returns>
+        /// <returns> True if the <paramref name="formFile"/>'s extension matches with <paramref name="searchText" /> </returns>
         /// <exception cref="ArgumentNullException"> Thrown when <paramref name="formFile"/> is null or empty. </exception>
         public static bool Is(this IFormFile formFile, string searchText)
         {
@@ -153,9 +289,49 @@ namespace SignHere
             byteArray.Validate();
 
             var findResult = Find(byteArray);
-            var extensionList = Vault.FindExtensions(searchText);
+            if (findResult == default)
+            {
+                return false;
+            }
 
-            return extensionList.Any(x => x == findResult?.Extension);
+            var extensionList = Vault.FindExtensions(searchText);
+            return extensionList.Any(x => x == findResult.Extension);
+        }
+
+        /// <summary>
+        /// <para>Converts the <paramref name="formFile"/> to a <see cref="MemoryStream"/> and checks its header bytes if its <see cref="Signature"/>.Description matches the given <paramref name="searchText"/>. <br/>
+        /// Maximum possible header is 50 bytes long, for better results pass at least 50 bytes.
+        /// </summary>
+        /// <param name="formFile">Uploaded file to be checked for its content. </param>
+        /// <param name="searchTexts">Texts to be looked in a <seealso cref="Signature" />'s description text.</param>
+        /// <returns> True if the <paramref name="formFile"/>'s extension matches with <paramref name="searchTexts" /> </returns>
+        /// <exception cref="ArgumentNullException"> Thrown when <paramref name="formFile"/> is null or empty. </exception>
+        public static bool Is(this IFormFile formFile, IEnumerable<string> searchTexts)
+        {
+            formFile.Validate();
+
+            var stream = new MemoryStream();
+            formFile.CopyTo(stream);
+            var byteArray = stream.ToArray();
+            byteArray.Validate();
+
+            var findResult = Find(byteArray);
+            if (findResult == default)
+            {
+                return false;
+            }
+
+            var extensionList = new List<Extension>();
+            foreach (var searchText in searchTexts)
+            {
+                var list = Vault.FindExtensions(searchText);
+                if (list?.Any() == true)
+                {
+                    extensionList.AddRange(list);
+                }
+            }
+
+            return extensionList.Distinct().Any(x => x == findResult.Extension);
         }
 
         private static void Validate(this Stream stream)

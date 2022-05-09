@@ -6,7 +6,7 @@
 		<Owners>Emek Taydaş</Owners>
 		<Copyright>2022</Copyright>
 		
-		<VersionPrefix>0.1.0</VersionPrefix>
+		<VersionPrefix>0.2.0</VersionPrefix>
 		<VersionSuffix>preview</VersionSuffix>		
 		
 		<PackageLicenseUrl>https://github.com/Mithgroth/SignHere/blob/master/LICENSE</PackageLicenseUrl>
