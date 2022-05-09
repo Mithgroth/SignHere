@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Title>SignHere</Title>
-		<Description>Signature validator to help you identify the actual extension of a file or stream.</Description>
+		<Description>Signature validator to help you identify the actual extension of a IFormFile or Stream.</Description>
 		<Authors>Emek Taydaş</Authors>
 		<Owners>Emek Taydaş</Owners>
 		<Copyright>2022</Copyright>
@@ -20,6 +20,9 @@
 		
 		<RepositoryType>git</RepositoryType>
 		<TargetFramework>netstandard2.0</TargetFramework>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageReadmeFile>..\README.md</PackageReadmeFile>
+		<PackageLicenseFile>..\LICENSE</PackageLicenseFile>
 	</PropertyGroup>
 	
 	<ItemGroup>
@@ -29,6 +32,12 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.16" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="\icon.png" Pack="true" PackagePath="\" />
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
+		<None Include="..\LICENSE" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>
