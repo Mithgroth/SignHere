@@ -1,9 +1,32 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SignHere.Database
 {
     internal static class Vault
     {
+        public static int MaxHeaderLength => Bank.Max(b => b.MagicBytes.Length);
+
+        public static IEnumerable<Extension> FindExtensions(string searchText)
+        {
+            return Vault.Bank.FindAll(
+                        b => b.Description.ToLower().Contains(
+                            searchText.ToLower()
+                            )
+                        ).Select(b => b.Extension).Distinct();
+        }
+
+        public static Dictionary<Category, IEnumerable<Extension>> GetDictionary(Category category)
+        {
+            return new Dictionary<Category, IEnumerable<Extension>>
+            {
+                {
+                    category,
+                    FindExtensions(category.ToString())
+                }
+            };
+        }
+
         internal static List<Signature> Bank = new List<Signature>()
         {
             new Signature()

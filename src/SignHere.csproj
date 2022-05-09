@@ -1,13 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
+		<Title>SignHere</Title>
+		<Description>Signature validator to help you identify the actual extension of a file or stream.</Description>
+		<Authors>Emek Taydaş</Authors>
+		<Owners>Emek Taydaş</Owners>
+		<Copyright>2022</Copyright>
+		
+		<VersionPrefix>0.1.0</VersionPrefix>
+		<VersionSuffix>preview</VersionSuffix>		
+		
+		<PackageLicenseUrl>https://github.com/Mithgroth/SignHere/blob/master/LICENSE</PackageLicenseUrl>
+		<PackageProjectUrl>https://github.com/Mithgroth/SignHere/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Mithgroth/SignHere/</RepositoryUrl>
+		<PackageTags>signhere, signature, file, validation, file validation, security, magic bytes, type, content, iformfile, upload</PackageTags>
+		<PackageReleaseNotes>
+			- init
+		</PackageReleaseNotes>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		
+		<RepositoryType>git</RepositoryType>
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
-
+	
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>$(MSBuildProjectName).Test</_Parameter1>
 		</AssemblyAttribute>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.16" />
 	</ItemGroup>
 
 </Project>
