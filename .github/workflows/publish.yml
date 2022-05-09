@@ -16,7 +16,6 @@ env:
   GITHUB_FEED: https://nuget.pkg.github.com/SignHere/
   GITHUB_USER: Mithgroth
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_PAT: ${{ secrets.GH_PAT }}
   # Official NuGet Feed settings
   NUGET_FEED: https://api.nuget.org/v3/index.json
   NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
@@ -77,8 +76,6 @@ jobs:
           VERSION="${VERSION//v}"
           echo Clean Version: $VERSION
           dotnet pack -v normal -c Release --include-symbols --include-source -p:PackageVersion=$VERSION -o nupkg src/$PROJECT_NAME.*proj
-      - name: Authenticate to GitHub Actions
-        run: dotnet nuget add source --username $GITHUB_USER --password $GITHUB_TOKEN --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$GITHUB_USER/index.json"
       - name: Push to NuGet Feed
-        run: dotnet nuget push ./nupkg/*.nupkg --source "github" --skip-duplicate --api-key $GITHUB_PAT
+        run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key $NUGET_KEY
 
