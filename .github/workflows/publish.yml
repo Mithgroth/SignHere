@@ -16,7 +16,7 @@ env:
   GITHUB_FEED: https://nuget.pkg.github.com/SignHere/
   GITHUB_USER: Mithgroth
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+  GITHUB_PAT: ${{ secrets.GH_PAT }}
   # Official NuGet Feed settings
   NUGET_FEED: https://api.nuget.org/v3/index.json
   NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
