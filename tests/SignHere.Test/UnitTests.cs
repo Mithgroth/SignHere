@@ -208,7 +208,7 @@ namespace SignHere.Test
         #region Is(IFormFile)
         private static FormFile GetFormFile()
         {
-            var stream = new MemoryStream(File.ReadAllBytes(".\\nevergonnagiveyouup.jpeg"));
+            var stream = new MemoryStream(File.ReadAllBytes("nevergonnagiveyouup.jpeg"));
             var formFile = new FormFile(stream, 0, stream.Length, "test", "nevergonnagiveyouup");
 
             return formFile;
