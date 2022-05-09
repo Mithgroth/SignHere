@@ -5,10 +5,10 @@
 		<Authors>Emek Taydaş</Authors>
 		<Owners>Emek Taydaş</Owners>
 		<Copyright>2022</Copyright>
-		
-		<VersionPrefix>0.2.0</VersionPrefix>
-		<VersionSuffix>preview</VersionSuffix>		
-		
+
+		<VersionPrefix>0.3.0</VersionPrefix>
+		<VersionSuffix>preview</VersionSuffix>
+
 		<PackageLicenseUrl>https://github.com/Mithgroth/SignHere/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/Mithgroth/SignHere/</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Mithgroth/SignHere/</RepositoryUrl>
@@ -17,27 +17,37 @@
 			- init
 		</PackageReleaseNotes>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		
+
 		<RepositoryType>git</RepositoryType>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<PackageIcon>icon.png</PackageIcon>
-		<PackageReadmeFile>..\README.md</PackageReadmeFile>
-		<PackageLicenseFile>..\LICENSE</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>$(MSBuildProjectName).Test</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
+
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.16" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.16" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="\icon.png" Pack="true" PackagePath="\" />
-		<None Include="..\README.md" Pack="true" PackagePath="\" />
-		<None Include="..\LICENSE" Pack="true" PackagePath="\" />
+		<None Remove="icon.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="icon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="icon.png" Pack="true" PackagePath="\">
+			<CopyToOutputDirectoryAlways>Always</CopyToOutputDirectoryAlways>
+		</Content>
+		<Content Include="..\README.md" Pack="true" PackagePath="\">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>
