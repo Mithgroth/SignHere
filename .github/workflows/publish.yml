@@ -35,21 +35,16 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --verbosity normal
-      
-  pack:
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pack
-        run: dotnet pack -v normal -c Release --no-restore --include-symbols --include-source -p:PackageVersion=$GITHUB_RUN_ID src/$PROJECT_NAME.csproj
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: nupkg
-          path: ./src/bin/Release/*.nupkg
+    - name: Pack
+      run: dotnet pack -v normal -c Release --no-restore --include-symbols --include-source -p:PackageVersion=$GITHUB_RUN_ID src/$PROJECT_NAME.csproj
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nupkg
+        path: ./src/bin/Release/*.nupkg
           
   prerelease:
-    needs: [ build, pack ]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifact
@@ -64,7 +59,7 @@ jobs:
           done
 
   deploy:
-    needs: [ build, pack, prerelease ]
+    needs: [ build, prerelease ]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
