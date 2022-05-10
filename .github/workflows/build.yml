@@ -1,7 +1,12 @@
 name: .NET
 
 on:
+  workflow_call:
   push:
+    paths-ignore:
+      - '.github/**'
+      - 'LICENSE'
+      - 'README.md'
     branches: [ main ]
     
 jobs:
