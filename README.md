@@ -19,7 +19,7 @@ There are two main ways to use this library:
     ```
 
 1. `.Is()` extension method
-   - `stream.Is()` extension: Works with any `Stream` object. Expects the stream content to be an `byte[]`. There are three different overloads to go with, all of them also have `IEnumerable` variants too:
+   - `stream.Is()` extension: Works with any `Stream` object. Expects the stream content to be a `byte[]`. There are three different overloads to go with, all of them also have `IEnumerable` variants too:
      - `stream.Is(Extension)`: Checks by `Extension` enum.
         ```csharp
         var stream = new MemoryStream(new byte[] { 0xFF, 0xD8, 0xFF, 0xE2, 0xB7, })
@@ -40,12 +40,13 @@ There are two main ways to use this library:
 
 ## Notes
 - Files with no extension are represented as `Extension.None`.
-- Extensions starting with a number are escaped with an underscore (_) in `Extension` enum, since an enum member cannot start with a number. (eg. Extension 3GP is represented as `Extension._3GP`)
+- Extensions starting with a number are escaped with an underscore _ in `Extension` enum, since an enum member cannot start with a number. (_eg. Extension 3GP is represented as `Extension._3GP`_)
 - `Category` relies on definition field in [filesignatures.net](https://filesignatures.net/) ([example, JPEG extension](https://filesignatures.net/index.php?search=JPEG&mode=EXT)). Until all extensions are processed and categorised manually, validating with this type might be deceiving. `Category.Video` will only filter the extensions with the word "video" in their descriptions.
 
 ## TODO
 - Performance improvements
 - Include other file signature databases
 - Support for `File` type if requested
-- Manual assigning of `Categories`
+- Manual assigning of `Category`s
 - More tests
+- Better icon
